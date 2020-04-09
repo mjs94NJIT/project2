@@ -1,4 +1,5 @@
 import random 
+from datetime import datetime
 
 class Node:
     
@@ -68,7 +69,10 @@ def createLinkedList(n):
         graph.addDirectedEdge(last, newest, 1)
         last = newest
 
+closed_nodes = 0
 def dijkstras(start):
+    global closed_nodes
+    closed_nodes = 0
     distance = {} 
     previous = {} 
     queue = []
@@ -85,11 +89,11 @@ def dijkstras(start):
         shortest = findMin(queue, distance)
         queue.remove(shortest)
         visited.add(shortest)
+        closed_nodes += 1 
         for neighbor in shortest.adj: 
             if neighbor in visited:
                 continue
             tempDistance = distance[shortest] + shortest.adj[neighbor]
-            print(str(tempDistance) + "= " + str(distance[shortest]) + " + " + str(shortest.adj[neighbor]))
             if tempDistance < distance[neighbor]:
                 distance[neighbor] = tempDistance
                 previous[neighbor] = shortest
@@ -128,9 +132,11 @@ def testGraph():
 WGraph = createRandomCompleteWeightedGraph(10)
 LList = createLinkedList(10)
 testgraph = testGraph()
-
+startTime = datetime.now()
 distance, previous = dijkstras(WGraph.getAllNodes()[0])
+endTime = datetime.now()
 
+print("RANDOM GRAPH")
 print("Vertex\tDist.\tParent")
 for vertex in distance: #for vertex key in distance 
     if(vertex):
@@ -140,9 +146,12 @@ for vertex in distance: #for vertex key in distance
             print(str(previous[vertex].value))
         else:
             print("None")
-            
+print("Total nodes closed: " + str(closed_nodes))
+print("Search time: " + str(endTime-startTime))
+startTime = datetime.now()
 distance, previous = dijkstras(testgraph.getAllNodes()[0])
-
+endTime = datetime.now()
+print("KNOWN GRAPH")
 print("Vertex\tDist.\tParent")
 for vertex in distance: #for vertex key in distance 
     if(vertex):
@@ -152,6 +161,7 @@ for vertex in distance: #for vertex key in distance
             print(str(previous[vertex].value))
         else:
             print("None")
-    
+print("Total nodes closed: " + str(closed_nodes))
+print("Search time: " + str(endTime-startTime))
     
 

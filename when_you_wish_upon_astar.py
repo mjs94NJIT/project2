@@ -1,175 +1,142 @@
-import random 
-from datetime import datetime
+from enum import Enum
+import random
+import datetime as datetime 
+
+class Directions(Enum):
+    UP = 0
+    RIGHT = 1 
+    DOWN = 2 
+    LEFT = 3
+#enumerator for directions 
 
 class Node:
     
-    def __init__(self, v):
-        self.value = v
-        self.adj = {} #adj {adjacent node: weight of the edge}
-#END OF CLASS Node 
+    def __init__(self, x, y, value): 
+        self.value = value 
+        self.x = int(x) 
+        self.y = int(y)
+        self.adj = {} #format is {node object: direction enum}
         
-class WeightedGraph:
+#END OF CLASS Node 
+
+class GridGraph:
     
     def __init__(self):
-        self.nodes = [] #the list of nodes in the graph
+        self.nodes = [] 
         
-    def addNode(self, value):
-        self.nodes.append(Node(value))
+    def addGridNode(self,x,y,value):
+        self.nodes.append(Node(x,y,value))
     
-    def addDirectedEdge(self, first, second, weight):
-        first.adj[second] = weight
-        
-    def removeUndirectedEdge(self, first, second):
-        if(first.adj[second]):
-            del first.adj[second]
+    def addUndirectedEdge(self, first, second):
+        if(first.x is second.x): #if they are on the same row
+            if(first.y + 1 == second.y):
+                first.adj[second] = Directions.RIGHT 
+                second.adj[first] = Directions.LEFT
+            if(first.y - 1 == second.y):
+                first.adj[second] = Directions.LEFT
+                second.adj[first] = Directions.RIGHT
+        if(first.y == second.y): #if they are the same collumn 
+            if(first.x + 1 == second.x):#second is one up
+                first.adj[second] = Directions.UP
+                second.adj[first] = Directions.DOWN
+            if(first.x - 1 == second.x):#second is one down 
+                first.adj[second] = Directions.DOWN
+                second.adj[first] = Directions.UP
+                
+    def removeUndirectedDedge(self, first, second):
+        del first.adj[second]
+        del second.adj[first]
         
     def getAllNodes(self):
         return self.nodes
-
-    #a method for testing that returns a node address that has a given value 
-    def getNodeFromValue(self, value):
-        for node in self.nodes:
-            if node.value is value:
-                return node
-#END OF CLASS DirectedGraph
-
-#helper methods 
-
-def printATraversal(nodeList):
-    if(not nodeList):
-        print('Path not found.')
-    else:
-        for node in nodeList:
-            if not node:
-                continue
-            print(str(node.value)+' ', end="")
-        print()
+#END OF CLASS GridGraph
 
 #start main code 
 
-def createRandomCompleteWeightedGraph(n):
-    graph = WeightedGraph()
-    for iter in range(0,n):
-        graph.addNode(iter)
-    nodeList = graph.getAllNodes()
-    for first in nodeList: 
-        for second in nodeList:
-            if first is not second: #no path to itself
-                first.adj[second] = random.randint(0,99)
-    return graph
+def createRandomGirdGraph(n):
+    print("Building random graph. This may take some time.")
+    graph = GridGraph()
+    for x in range(0,n):
+        for y in range(0,n):
+            graph.addGridNode(x,y,"("+str(x)+","+str(y)+")") #the nodes value is (x,y)
     
+    for first in graph.getAllNodes():
+        for second in graph.getAllNodes():
+            if(random.choice([True, False])): #50% chance of connecting 
+                graph.addUndirectedEdge(first, second) #the validitiy checking is done in the method itself 
+    return graph
 
-def createLinkedList(n): 
-    graph = WeightedGraph()
-    graph.addNode(0)
-    last = graph.getAllNodes()[0]
-    for iter in range(1,n):
-        graph.addNode(iter)
-        newest = graph.getAllNodes()[-1]
-        graph.addDirectedEdge(last, newest, 1)
-        last = newest
+
+
+#a* helper methods 
+
+def getH(source, dest):
+    return (dest.x - source.x) + (dest.y - source.y)
+            
+def getMin(queue, dictionary): #gets the next min value from a queue 
+    minVal = float('inf')
+    minNode = None 
+    for node in queue:
+        if dictionary[node] < minVal: 
+            minVal = dictionary[node]
+            minNode = node
+    return minNode
+    
+def getPath(parentMap, current):
+    path = []
+    path.append(current)
+    while current in parentMap:
+        current = parentMap[current]
+        path.insert(0, current)
+    return path
+
 
 
 closed_nodes = 0
-def dijkstras(start):
-    global closed_nodes
-    closed_nodes = 0
-    distance = {} 
-    previous = {} 
-    queue = []
-    visited = set()
-    for vertex in start.adj:
-        distance[vertex] = float('inf')
-        previous[vertex] = None 
-        if vertex is not start:
-            queue.append(vertex) #tuple of vertex and distance to it 
-            distance[start] = 0 
-        queue.append(start)
-    
-    while queue:
-        shortest = findMin(queue, distance)
-        queue.remove(shortest)
-        visited.add(shortest)
-        closed_nodes += 1 
-        for neighbor in shortest.adj: 
-            if neighbor in visited:
-                continue
-            tempDistance = distance[shortest] + shortest.adj[neighbor]
-            if tempDistance < distance[neighbor]:
-                distance[neighbor] = tempDistance
-                previous[neighbor] = shortest
+def astar(sourceNode, destNode):
+    print("Beginning A* search.")
+    openn = set() 
+    closed = set()
+    parent = {} 
+    g = {} #distance so far 
+    f = {} #g(n) + predicted distance 
+    g[sourceNode] = 0 
+    f[sourceNode] = getH(sourceNode, destNode)
+    openn.add(start)
+    while openn:
+        current = getMin(openn, f)
+        if current is destNode:
+            return getPath(parent, current)
+        closed.add(current)
+        global closed_nodes
+        closed_nodes += 1
+        openn.remove(current)
+        for neighbor in current.adj:
+            if( g.get(neighbor, float('inf')) > g[current] ): #if the neighbor is not in g, the default is infinite 
+                parent[neighbor] = current
+                g[neighbor] = g[current] + 1 #one extra move was used 
+                f[neighbor] = g[neighbor] + getH(neighbor, destNode)
+                if neighbor not in closed:
+                    openn.add(neighbor)
+    return None
+                
 
-    return distance, previous #returns a tuple
-    
-def findMin(queue, distance):
-    minimumDistance = float('inf')
-    minimumVertex = None
-    for vertex in queue:
-        if distance[vertex] <= minimumDistance:
-            minimumDistance = distance[vertex]
-            minimumVertex = vertex
-    return minimumVertex
+maze = createRandomGirdGraph(100)
+start = maze.getAllNodes()[0]
+end = maze.getAllNodes()[-1]
 
 
-def testGraph(): 
-    graph = WeightedGraph()
-    for i in range (0, 5):
-        graph.addNode(i)
-    nodes = graph.getAllNodes()
-    graph.addDirectedEdge(nodes[0], nodes[1], 9)
-    graph.addDirectedEdge(nodes[0], nodes[2], 3)
-    graph.addDirectedEdge(nodes[0], nodes[3], 2)
-    graph.addDirectedEdge(nodes[0], nodes[4], 10)
-    graph.addDirectedEdge(nodes[1], nodes[2], 8)
-    graph.addDirectedEdge(nodes[1], nodes[3], 7)
-    graph.addDirectedEdge(nodes[1], nodes[4], 5)
-    graph.addDirectedEdge(nodes[2], nodes[3], 4)
-    graph.addDirectedEdge(nodes[2], nodes[4], 11)
-    graph.addDirectedEdge(nodes[3], nodes[4], 6)
-    return graph
-
-
-
-WGraph = createRandomCompleteWeightedGraph(10)
-LList = createLinkedList(10)
-testgraph = testGraph()
-
-
-print("RANDOM GRAPH")
 startTime = datetime.now()
-distance, previous = dijkstras(WGraph.getAllNodes()[0])
+path = astar(start, end)
 endTime = datetime.now()
 
-print("Vertex\tDist.\tParent")
-for vertex in distance: #for vertex key in distance 
-    if(vertex):
-        print(str(vertex.value), end = "\t")
-        print(str(distance[vertex]), end = "\t")
-        if(vertex in previous):
-            print(str(previous[vertex].value))
-        else:
-            print("None")
-            
-print("Search time: " + str(endTime-startTime))
-print("Total nodes closed: " + str(closed_nodes))
-            
-            
-print("TEST GRAPH")
-startTime = datetime.now()
-distance, previous = dijkstras(testgraph.getAllNodes()[0])
-endTime = datetime.now()
-
-print("Vertex\tDist.\tParent")
-for vertex in distance: #for vertex key in distance 
-    if(vertex):
-        print(str(vertex.value), end = "\t")
-        print(str(distance[vertex]), end = "\t")
-        if(vertex in previous):
-            print(str(previous[vertex].value))
-        else:
-            print("None")
+if(path):
+    for node in path: 
+        if node:
+            print(node.value, end=" --> ")
+    print("Goal!")
+else:
+    print("No path found.")
     
 print("Search time: " + str(endTime-startTime))
 print("Total nodes closed: " + str(closed_nodes))
-    
-
