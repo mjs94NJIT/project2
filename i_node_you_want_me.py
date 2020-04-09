@@ -129,7 +129,7 @@ def testGraph():
 
 
 
-WGraph = createRandomCompleteWeightedGraph(10)
+WGraph = createRandomCompleteWeightedGraph(50) #CHANGE ME TO CHANGE RANDOM GRAPH'S SIZE
 LList = createLinkedList(10)
 testgraph = testGraph()
 startTime = datetime.now()
