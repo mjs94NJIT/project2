@@ -32,3 +32,5 @@ test results:
 
 when_you_wish_upon_astar.py contains the class ad testing for A* search. there is no predetermined test graph for this class. 
 test results for a smaller graph:
+
+![test4](https://i.ibb.co/8cwmFpd/image.png)
