@@ -138,7 +138,7 @@ mDFS_Nodes = sorter.mDFS(DAGraph)
 printATraversal(mDFS_Nodes)
 print("On a random graph.")
 
-DAGraph = createRandomDAGIter(1000)
+DAGraph = createRandomDAGIter(1000) #change me to change random graph's size 
 print("Kahn's")
 KAHN_Nodes = sorter.Kahns(DAGraph)
 printATraversal(KAHN_Nodes)
