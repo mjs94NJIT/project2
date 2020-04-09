@@ -125,8 +125,8 @@ def astar(sourceNode, destNode):
     return None
                 
 
-maze = createRandomGirdGraph(10)
-start = maze.getAllNodes()[0]
+maze = createRandomGirdGraph(10) #change me to change random graph's size
+start = maze.getAllNodes()[0] #larger values may take several minutes to build
 end = maze.getAllNodes()[-1]
 
 
