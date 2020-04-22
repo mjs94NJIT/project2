@@ -53,7 +53,7 @@ class GridGraph:
 
 #start main code 
 
-def createRandomGirdGraph(n):
+def createRandomGridGraph(n):
     print("Building random graph. This may take some time.")
     graph = GridGraph(n)
     for x in range(0,n):
