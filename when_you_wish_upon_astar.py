@@ -99,29 +99,29 @@ def getPath(parentMap, current):
 closed_nodes = 0
 def astar(sourceNode, destNode):
     print("Beginning A* search.")
-    openn = set() 
-    closed = set()
+    not_visited = set() 
+    visited = set()
     parent = {} 
     g = {} #distance so far 
     f = {} #g(n) + predicted distance 
     g[sourceNode] = 0 
     f[sourceNode] = getH(sourceNode, destNode)
-    openn.add(start)
-    while openn:
-        current = getMin(openn, f)
+    not_visited.add(start)
+    while not_visited:
+        current = getMin(not_visited, f)
         if current is destNode:
             return getPath(parent, current)
-        closed.add(current)
+        visited.add(current)
         global closed_nodes
         closed_nodes += 1
-        openn.remove(current)
+        not_visited.remove(current)
         for neighbor in current.adj:
             if( g.get(neighbor, float('inf')) > g[current] ): #if the neighbor is not in g, the default is infinite 
                 parent[neighbor] = current
                 g[neighbor] = g[current] + 1 #one extra move was used 
                 f[neighbor] = g[neighbor] + getH(neighbor, destNode)
-                if neighbor not in closed:
-                    openn.add(neighbor)
+                if neighbor not in visited:
+                    not_visited.add(neighbor)
     return None
                 
 
