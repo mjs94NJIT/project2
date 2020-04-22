@@ -38,31 +38,31 @@ class TopSort:
         self.visited = set()
         
     def Kahns(self, DAGraph):
-        nodeMap = {} #structured {node object: num of incoming edges}
+        incomingEdges = {} #structured {node object: num of incoming edges}
         return_path = []
         queue = []
         for node in DAGraph.getAllNodes(): #build the dictionary 
-            if node not in nodeMap: #the node isn't pointed to by any other nodes
-                nodeMap[node] = 0
-            for adj in node.adj:
-                if adj not in nodeMap:
-                    nodeMap[adj] = 1 #the node has been pointed to for the first time
+            if node not in incomingEdges: #the node isn't pointed to by any other nodes
+                incomingEdges[node] = 0
+            for neighbor in node.adj:
+                if neighbor not in incomingEdges:
+                    incomingEdges[neighbor] = 1 #the node has been pointed to for the first time
                 else:
-                    nodeMap[adj] += 1 #else the point is pointed to again 
+                    incomingEdges[neighbor] += 1 #else the point is pointed to again 
         #note: this could be more efficient in the design of node/graph was changed but i'm using the same structure as part 1 
         
-        for node in nodeMap:
-            if nodeMap[node] is 0: 
+        for node in incomingEdges:
+            if incomingEdges[node] is 0: 
                 queue.append(node)
         
         while(queue): #while the queue is not empty 
             node = queue.pop(0) #dequeue
             return_path.append(node)
             for adj in node.adj:
-                nodeMap[adj] -= 1
-                if nodeMap[adj] is 0:
+                incomingEdges[adj] -= 1
+                if incomingEdges[adj] is 0:
                     queue.append(adj)
-            nodeMap[node] -= 1 
+            incomingEdges[node] -= 1 
         
         return return_path
 
