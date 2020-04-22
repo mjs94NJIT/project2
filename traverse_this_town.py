@@ -26,16 +26,10 @@ class Graph:
         self.nodes.append(Node(value))
     
     def addUndirectedEdge(self, first, second):
-        #if second in adjList[first]:
-        #    return
-        #adjList[first].append(second)
-        #adjList[second].append(first)
         first.add(second)
         second.add(first) 
     
     def removeUndirectedEdge(self, first, second):
-        #adjList[first].remove(second)
-        #adjList[second].remove(first)
         first.remove(second)
         second.remove(first)
 
