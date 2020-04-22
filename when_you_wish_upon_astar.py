@@ -82,7 +82,7 @@ def createRandomGirdGraph(n):
 #a* helper methods 
 
 def getH(source, dest):
-    return (dest.x - source.x) + (dest.y - source.y)
+    return abs(dest.x - source.x) + abs(dest.y - source.y)
             
 def getMin(queue, dictionary): #gets the next min value from a queue 
     minVal = float('inf')
