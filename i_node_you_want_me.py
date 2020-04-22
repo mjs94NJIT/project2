@@ -69,9 +69,8 @@ def createLinkedList(n):
         graph.addDirectedEdge(last, newest, 1)
         last = newest
 
-closed_nodes = 0
+
 def dijkstras(start):
-    global closed_nodes
     closed_nodes = 0
     distance = {} 
     previous = {} 
@@ -98,7 +97,7 @@ def dijkstras(start):
                 distance[neighbor] = tempDistance
                 previous[neighbor] = shortest
 
-    return distance, previous #returns a tuple
+    return distance, previous, closed_nodes #returns a tuple
     
 def findMin(queue, distance):
     minimumDistance = float('inf')
@@ -133,7 +132,7 @@ WGraph = createRandomCompleteWeightedGraph(50) #CHANGE ME TO CHANGE RANDOM GRAPH
 LList = createLinkedList(10)
 testgraph = testGraph()
 startTime = datetime.now()
-distance, previous = dijkstras(WGraph.getAllNodes()[0])
+distance, previous, closed_nodes = dijkstras(WGraph.getAllNodes()[0])
 endTime = datetime.now()
 
 print("RANDOM GRAPH")
@@ -149,7 +148,7 @@ for vertex in distance: #for vertex key in distance
 print("Total nodes closed: " + str(closed_nodes))
 print("Search time: " + str(endTime-startTime))
 startTime = datetime.now()
-distance, previous = dijkstras(testgraph.getAllNodes()[0])
+distance, previous, closed_nodes = dijkstras(testgraph.getAllNodes()[0])
 endTime = datetime.now()
 print("KNOWN GRAPH")
 print("Vertex\tDist.\tParent")
