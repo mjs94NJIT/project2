@@ -55,7 +55,7 @@ def createRandomCompleteWeightedGraph(n):
     for first in nodeList: 
         for second in nodeList:
             if first is not second: #no path to itself
-                first.adj[second] = random.randint(0,99)
+                graph.addDirectedEdge(first,second,random.randint(0,99))
     return graph
     
 
