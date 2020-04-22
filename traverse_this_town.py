@@ -65,23 +65,23 @@ class GraphSearch:
 
     visited = set()
 
-    def DFSRec(self, start, end, path):
+    def DFSRecHelper(self, start, end, path):
         if(start not in self.visited):
             self.visited.add(start)
         if(start is end): #the node is found, return it the path
             return path
         for node in start.adj:
             if(node not in self.visited): #for each node not visited
-                temp = self.DFSRec(node, end, path+[node]) #recur with each path + the neighbor 
+                temp = self.DFSRecHelper(node, end, path+[node]) #recur with each path + the neighbor 
                 if(temp): #if the path is found
                     return temp #return it 
         return None #if the path is never found, return None 
 
     #a helper method to pass an empty path to the recursive function 
-    def DFSRecHelper(self, start, end): 
+    def DFSRec(self, start, end): 
         self.visited.clear()
         path = [start] #the path will always start with the first node 
-        return self.DFSRec(start, end, path)
+        return self.DFSRecHelper(start, end, path)
 
     def DFSIter(self, start, end):
         self.visited.clear()
@@ -198,7 +198,7 @@ goal = testgraph.getNodeFromValue('D')
 print("Iterative DFS from "+start.value+" to "+goal.value, end=": ")
 printATraversal(searcher.DFSIter(start, goal))
 print("Recursive DFS from "+start.value+" to "+goal.value, end=": ")
-printATraversal(searcher.DFSRecHelper(start,goal))
+printATraversal(searcher.DFSRec(start,goal))
 print("Iterative BFT", end=": ")
 printATraversal(searcher.BFTIter(testgraph))
 print("Recursive BFT", end=": ")
@@ -213,7 +213,7 @@ goal = testgraph.getRandomNode()
 print("Iterative DFS from "+start.value+" to "+goal.value, end=": ")
 printATraversal(searcher.DFSIter(start, goal))
 print("Recursive DFS from "+start.value+" to "+goal.value, end=": ")
-printATraversal(searcher.DFSRecHelper(start,goal))
+printATraversal(searcher.DFSRec(start,goal))
 print("Iterative BFT", end=": ")
 printATraversal(searcher.BFTIter(testgraph))
 print("Recursive BFT", end=": ")
