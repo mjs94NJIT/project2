@@ -58,8 +58,8 @@ def createRandomGirdGraph(n):
     graph = GridGraph(n)
     for x in range(0,n):
         for y in range(0,n):
-            value= "("+str(x)+","+str(y)+")"
-            graph.addGridNode(x,y,value) #the nodes value is (x,y)
+            value= "(%d,%d)"
+            graph.addGridNode(x,y,value % (x,y)) #the nodes value is (x,y)
     progress = 0
     nodes = graph.getAllNodes()
     for x in range(0,n):
