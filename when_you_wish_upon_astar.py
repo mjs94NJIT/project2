@@ -103,8 +103,9 @@ def getPath(parentMap, current):
 
 
 
-closed_nodes = 0
+
 def astar(sourceNode, destNode):
+    closed_nodes = 0
     print("Beginning A* search.")
     not_visited = set() 
     visited = set()
@@ -117,9 +118,8 @@ def astar(sourceNode, destNode):
     while not_visited:
         current = getMin(not_visited, distance_to_goal)
         if current is destNode:
-            return getPath(parent, current)
+            return getPath(parent, current), closed_nodes
         visited.add(current)
-        global closed_nodes
         closed_nodes += 1
         not_visited.remove(current)
         for neighbor in current.adj:
@@ -129,16 +129,16 @@ def astar(sourceNode, destNode):
                 distance_to_goal[neighbor] = distance_from_start[neighbor] + getHurestic(neighbor, destNode)
                 if neighbor not in visited:
                     not_visited.add(neighbor)
-    return None
+    return None, closed_nodes
                 
 
-maze = createRandomGirdGraph(100) #change me to change random graph's size
+maze = createRandomGridGraph(100) #change me to change random graph's size
 start = maze.getAllNodes()[0][0]
 end = maze.getAllNodes()[-1][-1]
 
 
 startTime = datetime.now()
-path = astar(start, end)
+path, closed_nodes = astar(start, end)
 endTime = datetime.now()
 
 print("Start --> ", end="")
