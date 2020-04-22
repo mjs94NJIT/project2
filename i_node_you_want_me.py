@@ -82,7 +82,7 @@ def dijkstras(start):
         previous[vertex] = None 
         if vertex is not start:
             queue.append(vertex) #tuple of vertex and distance to it 
-            distance[start] = 0 
+        distance[start] = 0 
         queue.append(start)
     
     while queue:
