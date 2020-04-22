@@ -21,11 +21,11 @@ class Node:
 
 class GridGraph:
     
-    def __init__(self):
-        self.nodes = [] 
+    def __init__(self,n):
+        self.nodes  = [[None for i in range(n)] for j in range(n)]
         
     def addGridNode(self,x,y,value):
-        self.nodes.append(Node(x,y,value))
+        self.nodes[x][y] = Node(x,y,value)
     
     def addUndirectedEdge(self, first, second):
         if(first.x is second.x): #if they are on the same row
@@ -55,19 +55,26 @@ class GridGraph:
 
 def createRandomGirdGraph(n):
     print("Building random graph. This may take some time.")
-    graph = GridGraph()
+    graph = GridGraph(n)
     for x in range(0,n):
         for y in range(0,n):
-            graph.addGridNode(x,y,"("+str(x)+","+str(y)+")") #the nodes value is (x,y)
-    
+            value= "("+str(x)+","+str(y)+")"
+            graph.addGridNode(x,y,value) #the nodes value is (x,y)
     progress = 0
-    for first in graph.getAllNodes():
+    nodes = graph.getAllNodes()
+    for x in range(0,n):
         print("Progress: " + str(int(  progress/len( graph.getAllNodes() )  * 100)) +"%\r", end="")
         progress+=1
-        for second in graph.getAllNodes():
-            if(random.choice([True, False])): #50% chance of connecting 
-                graph.addUndirectedEdge(first, second) #the validitiy checking is done in the method itself 
-    print("Progres: Done!")
+        for y in range(0,n):
+            if(random.choice([True, False]) and y<n-1): #50% chance of connecting 
+                graph.addUndirectedEdge(nodes[x][y], nodes[x][y+1]) #the validitiy checking is done in the method itself 
+            if(random.choice([True, False]) and x<n-1): 
+                graph.addUndirectedEdge(nodes[x][y], nodes[x+1][y]) 
+            if(random.choice([True, False]) and y>0):
+                graph.addUndirectedEdge(nodes[x][y], nodes[x][y-1]) 
+            if(random.choice([True, False]) and x>0): 
+                graph.addUndirectedEdge(nodes[x][y], nodes[x-1][y]) 
+    print("Progress: Done!")
     return graph
 
 
@@ -99,35 +106,35 @@ def getPath(parentMap, current):
 closed_nodes = 0
 def astar(sourceNode, destNode):
     print("Beginning A* search.")
-    not_visited = set() 
-    visited = set()
+    openn = set() 
+    closed = set()
     parent = {} 
     g = {} #distance so far 
     f = {} #g(n) + predicted distance 
     g[sourceNode] = 0 
     f[sourceNode] = getH(sourceNode, destNode)
-    not_visited.add(start)
-    while not_visited:
-        current = getMin(not_visited, f)
+    openn.add(start)
+    while openn:
+        current = getMin(openn, f)
         if current is destNode:
             return getPath(parent, current)
-        visited.add(current)
+        closed.add(current)
         global closed_nodes
         closed_nodes += 1
-        not_visited.remove(current)
+        openn.remove(current)
         for neighbor in current.adj:
             if( g.get(neighbor, float('inf')) > g[current] ): #if the neighbor is not in g, the default is infinite 
                 parent[neighbor] = current
                 g[neighbor] = g[current] + 1 #one extra move was used 
                 f[neighbor] = g[neighbor] + getH(neighbor, destNode)
-                if neighbor not in visited:
-                    not_visited.add(neighbor)
+                if neighbor not in closed:
+                    openn.add(neighbor)
     return None
                 
 
-maze = createRandomGirdGraph(10) #change me to change random graph's size
-start = maze.getAllNodes()[0] #larger values may take several minutes to build
-end = maze.getAllNodes()[-1]
+maze = createRandomGirdGraph(100) #change me to change random graph's size
+start = maze.getAllNodes()[0][0]
+end = maze.getAllNodes()[-1][-1]
 
 
 startTime = datetime.now()
