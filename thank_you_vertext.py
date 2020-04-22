@@ -39,7 +39,7 @@ class TopSort:
         
     def Kahns(self, DAGraph):
         nodeMap = {} #structured {node object: num of incoming edges}
-        retArray = []
+        return_path = []
         queue = []
         for node in DAGraph.getAllNodes(): #build the dictionary 
             if node not in nodeMap: #the node isn't pointed to by any other nodes
@@ -57,14 +57,14 @@ class TopSort:
         
         while(queue): #while the queue is not empty 
             node = queue.pop(0) #dequeue
-            retArray.append(node)
+            return_path.append(node)
             for adj in node.adj:
                 nodeMap[adj] -= 1
                 if nodeMap[adj] is 0:
                     queue.append(adj)
             nodeMap[node] -= 1 
         
-        return retArray
+        return return_path
 
     def mDFS(self, DAGraph):
         self.visited.clear()
@@ -145,4 +145,3 @@ printATraversal(KAHN_Nodes)
 print("mDFS")
 mDFS_Nodes = sorter.mDFS(DAGraph)
 printATraversal(mDFS_Nodes)
-
