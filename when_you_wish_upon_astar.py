@@ -81,7 +81,7 @@ def createRandomGirdGraph(n):
 
 #a* helper methods 
 
-def getH(source, dest):
+def getHurestic(source, dest):
     return abs(dest.x - source.x) + abs(dest.y - source.y)
             
 def getMin(queue, dictionary): #gets the next min value from a queue 
@@ -106,29 +106,29 @@ def getPath(parentMap, current):
 closed_nodes = 0
 def astar(sourceNode, destNode):
     print("Beginning A* search.")
-    openn = set() 
-    closed = set()
+    not_visited = set() 
+    visited = set()
     parent = {} 
-    g = {} #distance so far 
-    f = {} #g(n) + predicted distance 
-    g[sourceNode] = 0 
-    f[sourceNode] = getH(sourceNode, destNode)
-    openn.add(start)
-    while openn:
-        current = getMin(openn, f)
+    distance_from_start = {} #distance so far 
+    distance_to_goal = {} #g(n) + predicted distance 
+    distance_from_start[sourceNode] = 0 
+    distance_to_goal[sourceNode] = getHurestic(sourceNode, destNode)
+    not_visited.add(start)
+    while not_visited:
+        current = getMin(not_visited, distance_to_goal)
         if current is destNode:
             return getPath(parent, current)
-        closed.add(current)
+        visited.add(current)
         global closed_nodes
         closed_nodes += 1
-        openn.remove(current)
+        not_visited.remove(current)
         for neighbor in current.adj:
-            if( g.get(neighbor, float('inf')) > g[current] ): #if the neighbor is not in g, the default is infinite 
+            if( distance_from_start.get(neighbor, float('inf')) > distance_from_start[current] ): #if the neighbor is not in g, the default is infinite 
                 parent[neighbor] = current
-                g[neighbor] = g[current] + 1 #one extra move was used 
-                f[neighbor] = g[neighbor] + getH(neighbor, destNode)
-                if neighbor not in closed:
-                    openn.add(neighbor)
+                distance_from_start[neighbor] = distance_from_start[current] + 1 #one extra move was used 
+                distance_to_goal[neighbor] = distance_from_start[neighbor] + getHurestic(neighbor, destNode)
+                if neighbor not in visited:
+                    not_visited.add(neighbor)
     return None
                 
 
