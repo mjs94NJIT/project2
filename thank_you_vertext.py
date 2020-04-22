@@ -1,28 +1,16 @@
 import random 
-
-class Node:
-    
-    def __init__(self, v):
-        self.value = v
-        self.adj = set() #adj is the adjacent nodes
-#END OF CLASS Node 
+from graph import Graph
         
-class DirectedGraph:
+class DirectedGraph(Graph):
     
     def __init__(self):
         self.nodes = [] #the list of nodes in the graph
-        
-    def addNode(self, value):
-        self.nodes.append(Node(value))
     
     def addDirectedEdge(self, first, second):
         first.adj.add(second)
         
     def removeUndirectedEdge(self, first, second):
         first.remove(second)
-        
-    def getAllNodes(self):
-        return self.nodes
 
     #a method for testing that returns a node address that has a given value 
     def getNodeFromValue(self, value):

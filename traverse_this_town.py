@@ -1,42 +1,19 @@
 import random 
+from graph import Graph
 
-class Node:
-    def __init__(self, v):
-        self.value = v
-        self.adj = set()
-
-    def adj(self):
-        return self.adj
-
-    def add(self, node):
-        self.adj.add(node)
-    
-    def remove(self, node):
-        self.adj.remove(node)
-
-#END OF CLASS Node 
-
-class Graph:
+class UndirectedGraph(Graph):
     
     def __init__(self):
         self.nodes = [] # a list of nodes in the graph 
-        #adjList = {} # a direction where key is a node and value is the list of edges 
    
-    def addNode(self, value):
-        self.nodes.append(Node(value))
-    
     def addUndirectedEdge(self, first, second):
-        first.add(second)
-        second.add(first) 
+        first.adj.add(second)
+        second.adj.add(first) 
     
     def removeUndirectedEdge(self, first, second):
-        first.remove(second)
-        second.remove(first)
+        first.adj.remove(second)
+        second.adj.remove(first)
 
-    #returns the list of all nodes in the graph 
-    def getAllNodes(self):
-        return self.nodes
-    
     #a method for createLinkedList that adds a one-way edge 
     def addDirectedEdge(self, first, second): #for use in createLinkedList
         #if second in adjList[first]:
@@ -140,7 +117,7 @@ class GraphSearch:
 #END OF CLASS GraphSearch 
 
 def createRadomUnweightedGraphIter(n): #part b
-    graph = Graph()
+    graph = UndirectedGraph()
     for itr in range(0,n):
         graph.addNode(str(itr)) #using the character representation of the node number as the value 
     nodes = graph.getAllNodes()
@@ -149,7 +126,7 @@ def createRadomUnweightedGraphIter(n): #part b
     return graph
 
 def createLinkedList(n): #part c
-    graph = Graph()
+    graph = UndirectedGraph()
     graph.addNode(str(0))
     last = graph.getTail()
     for itr in range(1,n):
@@ -160,7 +137,7 @@ def createLinkedList(n): #part c
 
 #create the graph pictured on page 1 
 def createTestGraph():
-    testGraph = Graph()
+    testGraph = UndirectedGraph()
     for node in ['S','A','C','B','E','F','G','K','L','D']:
         testGraph.addNode(node)
     testGraph.addUndirectedEdge(testGraph.getNodeFromValue('S'),testGraph.getNodeFromValue('A'))
